@@ -30,7 +30,7 @@ Vue.component('product', {
             }
         },
         addToCart() {
-            //To-Do
+            this.$emit('add-to-cart', this.count); // Emit event with count
         }
     },
 })
@@ -100,5 +100,8 @@ var app = new Vue({
         cart: 0,
     },
     methods: {
+        updateCart(count) { 
+            // Update the cart total 
+            this.cart += count; } 
     }
 })
