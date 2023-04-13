@@ -20,8 +20,16 @@
             <a href="#index">Women</a>
             <a href="#index">About</a>
             <a href="#index">Contact</a>
-            <div class="cart-icon"> 
+            <div class="cart-icon"
+            class="cart-icon"
+            @mouseover="showCartPreview = true"
+            @mouseleave="showCartPreview = false"> 
                 <a href="#cart"><i class="fas fa-shopping-cart fa-lg" style="color: grey;"></i> {{ cart }}</a> 
+                <cart-preview
+                v-if="showCartPreview"
+                :cart-items="cartItems"
+                @remove-from-cart="removeFromCart"
+                ></cart-preview>
             </div>
     </div>
     <product v-on:add-to-cart="updateCart"></product>

@@ -94,14 +94,55 @@ Vue.component('product-description', {
     },
 })
 
+
+// ---------- preview component --------
+
+Vue.component('cart-preview', {
+    template: `
+      <div class="cart-preview">
+        <div v-for="(item, index) in cartItems" class="cart-item">
+          <img :src="item.image" alt="Product image" class="product-image">
+          <div class="product-info">
+            <p class="product-name">{{ item.name }}</p>
+            <p class="product-price">$ {{ item.price }}</p>
+          </div>
+          <button class="delete-button" @click="removeFromCart(index)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <button class="checkout-button" v-if="cartItems.length > 0">Checkout</button>
+      </div>
+    `,
+    props: ['cartItems'],
+    methods: {
+      removeFromCart(index) {
+        this.$emit('remove-from-cart', index);
+      },
+    },
+  });
+
+
 var app = new Vue({
     el: '#app',
     data: {
-        cart: 0,
+      cart: 0,
+      cartItems: [],
+      showCartPreview: false,
     },
     methods: {
-        updateCart(count) { 
-            // Update the cart total 
-            this.cart += count; } 
-    }
-})
+      updateCart(count) {
+        // Update the cart total
+        this.cart += count;
+        // Add the item to the cartItems array
+        this.cartItems.push({
+          name: 'Fall Limited Edition Sneakers',
+          price: 125.0,
+          image: 'assets/img1.jpg',
+        });
+      },
+      removeFromCart(index) {
+        this.cart -= 1;
+        this.cartItems.splice(index, 1);
+      },
+    },
+  });
