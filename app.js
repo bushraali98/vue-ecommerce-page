@@ -79,19 +79,36 @@ Vue.component('image-gallery', {
 
 Vue.component('product-description', {
     template: `
-        <div id="product-name">
-            <h1 class="barnd-name">SNEAKER COMPANY</h1>
-            <h1>{{ product }}</h1>
-            <p>These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.</p>
-            <div> <p>$ {{price}}</p> </div>
+    <div id="product-name">
+        <h1 class="barnd-name">SNEAKER COMPANY</h1>
+        <h1>{{ product.name }}</h1>
+        <p :class="{ 'on-sale': product.onSale }">$ {{ product.price }}</p>
+        <div class="discount-badge" v-if="product.discount > 0">
+                {{ product.discount }}% OFF
         </div>
+        <p v-if="product.onSale" class="discounted-price">$ {{ discountedPrice }}</p>
+        <p v-else v-show="product.onSale">$ {{ product.price }}</p>
+        <p>These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.</p>
+    </div>
     `,
     data() {
         return {
-            product: 'Fall Limited Edition Sneakers',
-            price: 125.00
+            product: {
+                id: 1,
+                name: 'Fall Limited Edition Sneakers',
+                image: 'assets/img1.jpg',
+                price: 250.00,
+                discountedPrice: 125.00,
+                onSale: true,
+                discount: 50
+            }
         }
     },
+    computed : {
+        discountedPrice() {
+            return (this.product.price * (1 - (this.product.discount / 100))).toFixed(2);
+        }
+    }
 })
 
 

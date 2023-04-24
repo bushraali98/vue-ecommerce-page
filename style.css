@@ -243,3 +243,25 @@ h1:nth-child(2) {
     width: 100%;
     cursor: pointer;
   }
+
+  /* Add styles for sale feature */
+.on-sale {
+    text-decoration: line-through;
+    color: grey;
+  }
+  .discounted-price {
+    color: black;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+
+  .discount-badge {
+    display: inline-block;
+    background-color: #FFDEAD;
+    color: #ff7400;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 3px;
+}
