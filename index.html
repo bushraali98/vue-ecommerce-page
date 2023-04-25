@@ -24,7 +24,7 @@
             class="cart-icon"
             @mouseover="showCartPreview = true"
             @mouseleave="showCartPreview = false"> 
-                <a href="#cart"><i class="fas fa-shopping-cart fa-lg" style="color: grey;"></i> {{ cart }}</a> 
+                <a href="#cart"><i class="fas fa-shopping-cart fa-lg" style="color: grey;"></i></a> 
                 <cart-preview
                 v-if="showCartPreview"
                 :cart-items="cartItems"

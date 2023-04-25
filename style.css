@@ -91,7 +91,7 @@ img {
 
 #product-name {
     width: 65%;
-    padding-bottom: 120px;
+    padding-bottom: 70px;
 }
 
 .cart-details {
@@ -264,4 +264,16 @@ h1:nth-child(2) {
     padding: 5px;
     margin-top: 5px;
     border-radius: 3px;
+}
+
+/* .cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+} */
+  
+.grey-line {
+    border-top: 1px solid grey;
+    margin-top: 5px;
+    margin-bottom: 10px;
 }

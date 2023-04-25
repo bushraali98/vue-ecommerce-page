@@ -5,7 +5,7 @@ Vue.component('product', {
     <div class="product">
             <image-gallery></image-gallery>
             <div class="product-details">
-                <product-description></product-description>
+                <product-description :product="product"></product-description>
                 <div class="cart-details">
                     <div> <button class="minus-buttun" v-on:click="decreamentProduct">-</button> </div>
                     <div class="count"> <p id="text">{{count}}</p> </div>
@@ -17,7 +17,15 @@ Vue.component('product', {
     `,
     data() {
         return {
-            count: 0,
+            count: 1,
+            product: {
+                id: 1,
+                name: 'Fall Limited Edition Sneakers',
+                image: 'assets/img1.jpg',
+                price: 250.00,
+                discountedPrice: 125.00,
+                discount: 50
+            }
         }
     }, 
     methods: {
@@ -25,12 +33,12 @@ Vue.component('product', {
             this.count++
         },
         decreamentProduct () {
-            if (this.count > 0 ) {
+            if (this.count > 1 ) {
                 this.count--
             }
         },
         addToCart() {
-            this.$emit('add-to-cart', this.count); // Emit event with count
+            this.$emit('add-to-cart', this.product,this.count); // Emit event with count and product
         }
     },
 })
@@ -78,30 +86,24 @@ Vue.component('image-gallery', {
 // ----- product details component ------
 
 Vue.component('product-description', {
+    props: {
+        product: Object
+    },
     template: `
     <div id="product-name">
         <h1 class="barnd-name">SNEAKER COMPANY</h1>
         <h1>{{ product.name }}</h1>
-        <p :class="{ 'on-sale': product.onSale }">$ {{ product.price }}</p>
+        <p :class="product.discount > 0 ? 'on-sale' : ''">$ {{ product.price }}</p>
         <div class="discount-badge" v-if="product.discount > 0">
                 {{ product.discount }}% OFF
         </div>
-        <p v-if="product.onSale" class="discounted-price">$ {{ discountedPrice }}</p>
-        <p v-else v-show="product.onSale">$ {{ product.price }}</p>
+        <p v-if="product.discount > 0" class="discounted-price">$ {{ discountedPrice }}</p>
+        <p v-else v-show="product.discount > 0">$ {{ product.price }}</p>
         <p>These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.</p>
     </div>
     `,
     data() {
         return {
-            product: {
-                id: 1,
-                name: 'Fall Limited Edition Sneakers',
-                image: 'assets/img1.jpg',
-                price: 250.00,
-                discountedPrice: 125.00,
-                onSale: true,
-                discount: 50
-            }
         }
     },
     computed : {
@@ -117,11 +119,19 @@ Vue.component('product-description', {
 Vue.component('cart-preview', {
     template: `
       <div class="cart-preview">
+        <div class="cart-header">
+            <h2>Cart</h2>
+            <hr class="grey-line">
+        </div>
+        <div v-if="cartItems.length === 0">
+            Your cart is empty.
+        </div>
+        <div v-else>
         <div v-for="(item, index) in cartItems" class="cart-item">
-          <img :src="item.image" alt="Product image" class="product-image">
+          <img :src="item.product.image" alt="Product image" class="product-image">
           <div class="product-info">
-            <p class="product-name">{{ item.name }}</p>
-            <p class="product-price">$ {{ item.price }}</p>
+            <p class="product-name">{{ item.product.name }}</p>
+            <p class="product-price">$ {{ item.product.price }} x {{item.count}}</p>
           </div>
           <button class="delete-button" @click="removeFromCart(index)">
             <i class="fas fa-trash"></i>
@@ -147,19 +157,19 @@ var app = new Vue({
       showCartPreview: false,
     },
     methods: {
-      updateCart(count) {
-        // Update the cart total
-        this.cart += count;
-        // Add the item to the cartItems array
-        this.cartItems.push({
-          name: 'Fall Limited Edition Sneakers',
-          price: 125.0,
-          image: 'assets/img1.jpg',
-        });
-      },
-      removeFromCart(index) {
-        this.cart -= 1;
-        this.cartItems.splice(index, 1);
-      },
+        updateCart(product, count) {
+            const existingItem = this.cartItems.find(item => item.product === product);
+
+            if (existingItem) {
+                existingItem.count += count;
+            } else {
+                this.cartItems.push({product, count});
+            }
+            this.cart += count;
+        },
+        removeFromCart(cartItem) {
+            this.cart -= cartItem.count;
+            this.cartItems.splice(this.cartItems.indexOf(cartItem), 1);
+        }
     },
   });
