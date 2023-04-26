@@ -1,11 +1,15 @@
 // ----- product component ------
 
 Vue.component('product', {
+    props: {
+        product: Object,
+        discountedPrice: Number,
+    },
     template: `
     <div class="product">
             <image-gallery></image-gallery>
             <div class="product-details">
-                <product-description :product="product"></product-description>
+                <product-description :product="product" :discounted-price="discountedPrice"></product-description>
                 <div class="cart-details">
                     <div> <button class="minus-buttun" v-on:click="decreamentProduct">-</button> </div>
                     <div class="count"> <p id="text">{{count}}</p> </div>
@@ -18,14 +22,6 @@ Vue.component('product', {
     data() {
         return {
             count: 1,
-            product: {
-                id: 1,
-                name: 'Fall Limited Edition Sneakers',
-                image: 'assets/img1.jpg',
-                price: 250.00,
-                discountedPrice: 125.00,
-                discount: 50
-            }
         }
     }, 
     methods: {
@@ -87,7 +83,8 @@ Vue.component('image-gallery', {
 
 Vue.component('product-description', {
     props: {
-        product: Object
+        product: Object,
+        discountedPrice: Number,
     },
     template: `
     <div id="product-name">
@@ -106,17 +103,18 @@ Vue.component('product-description', {
         return {
         }
     },
-    computed : {
-        discountedPrice() {
-            return (this.product.price * (1 - (this.product.discount / 100))).toFixed(2);
-        }
-    }
 })
 
 
 // ---------- preview component --------
 
 Vue.component('cart-preview', {
+    props: {
+        cartItems: Array,
+        discountedPrice: Number,
+        product: Object,
+        cartTotal: [Number, String]
+    },
     template: `
       <div class="cart-preview">
         <div class="cart-header">
@@ -131,7 +129,7 @@ Vue.component('cart-preview', {
           <img :src="item.product.image" alt="Product image" class="product-image">
           <div class="product-info">
             <p class="product-name">{{ item.product.name }}</p>
-            <p class="product-price">$ {{ item.product.price }} x {{item.count}}</p>
+            <p class="product-price">$ {{ cartTotal }} x {{item.count}}</p>
           </div>
           <button class="delete-button" @click="removeFromCart(index)">
             <i class="fas fa-trash"></i>
@@ -139,22 +137,56 @@ Vue.component('cart-preview', {
         </div>
         <button class="checkout-button" v-if="cartItems.length > 0">Checkout</button>
       </div>
+      </div>
     `,
-    props: ['cartItems'],
     methods: {
       removeFromCart(index) {
         this.$emit('remove-from-cart', index);
       },
     },
+    computed: {
+        // total() {
+        //     if (product.discount > 0) {
+        //         return this.count * this.discountedPrice;
+        //     } else {
+        //         return this.count * this.product.price;
+        //     }
+        // }
+    }
   });
 
 
 var app = new Vue({
     el: '#app',
     data: {
-      cart: 0,
-      cartItems: [],
-      showCartPreview: false,
+        product: {
+            id: 1,
+            name: 'Fall Limited Edition Sneakers',
+            image: 'assets/img1.jpg',
+            price: 250.00,
+            discount: 50
+        },
+        cart: 0,
+        cartItems: [],
+        showCartPreview: false,
+    },
+    computed: {
+        discountedPrice() {
+            return Number((this.product.price * (1 - (this.product.discount / 100))).toFixed(2));
+        },
+        cartTotal() {
+            let total = 0;
+            for (let i = 0; i < this.cartItems.length; i++) {
+              const item = this.cartItems[i];
+              if (item.product.discount > 0 ) {
+                total += this.discountedPrice * item.count;
+                return Number(total);
+              } else {
+                total += item.product.price * item.count;
+                return Number(total);
+              }
+            }
+        },
     },
     methods: {
         updateCart(product, count) {

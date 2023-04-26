@@ -28,11 +28,14 @@
                 <cart-preview
                 v-if="showCartPreview"
                 :cart-items="cartItems"
+                :product="product"
+                :cart-total="cartTotal"
+                :discounted-price="discountedPrice"
                 @remove-from-cart="removeFromCart"
                 ></cart-preview>
             </div>
     </div>
-    <product v-on:add-to-cart="updateCart"></product>
+    <product :product="product" :discounted-price="discountedPrice" v-on:add-to-cart="updateCart"></product>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
     <script src="app.js"></script>
