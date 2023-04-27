@@ -14,7 +14,7 @@ Vue.component('product', {
                     <div> <button class="minus-buttun" v-on:click="decreamentProduct">-</button> </div>
                     <div class="count"> <p id="text">{{count}}</p> </div>
                     <div> <button class="pluss-buttun" v-on:click="increamentProduct">+</button> </div>
-                    <div> <button class="cart-button" v-on:click="addToCart"> <i class="fa-solid fa-cart-shopping"></i> add to cart</button> </div>
+                    <div> <button class="cart-button" :class="product.quantity === 0 ? 'disabled-button' : ''" v-on:click="addToCart"> <i class="fa-solid fa-cart-shopping"></i> add to cart</button> </div>
                 </div>
             </div>
         </div>
@@ -90,13 +90,14 @@ Vue.component('product-description', {
     <div id="product-name">
         <h1 class="barnd-name">SNEAKER COMPANY</h1>
         <h1>{{ product.name }}</h1>
+        <p>These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.</p>
+        <p id="text" v-if="product.quantity === 0">Out of Stock!!!</p> 
         <p :class="product.discount > 0 ? 'on-sale' : ''">$ {{ product.price }}</p>
         <div class="discount-badge" v-if="product.discount > 0">
                 {{ product.discount }}% OFF
         </div>
         <p v-if="product.discount > 0" class="discounted-price">$ {{ discountedPrice }}</p>
         <p v-else v-show="product.discount > 0">$ {{ product.price }}</p>
-        <p>These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.</p>
     </div>
     `,
     data() {
@@ -144,15 +145,6 @@ Vue.component('cart-preview', {
         this.$emit('remove-from-cart', index);
       },
     },
-    computed: {
-        // total() {
-        //     if (product.discount > 0) {
-        //         return this.count * this.discountedPrice;
-        //     } else {
-        //         return this.count * this.product.price;
-        //     }
-        // }
-    }
   });
 
 
@@ -164,7 +156,8 @@ var app = new Vue({
             name: 'Fall Limited Edition Sneakers',
             image: 'assets/img1.jpg',
             price: 250.00,
-            discount: 50
+            discount: 50,
+            quantity: 10
         },
         cart: 0,
         cartItems: [],
